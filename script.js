@@ -1,6 +1,4 @@
 //TODO
-//ifd we have an operator se already and a operator is selected again, the opearte an owhat we have and otupt the result with the new operator waiting for input
-//Your calculator should not evaluate more than a single pair of numbers at a time.
 //round answers with long decimals so that they don’t overflow the screen.
 //Pressing “clear” should wipe out any existing data. Make sure the user is really starting fresh after pressing “clear”
 //Display a snarky error message if the user tries to divide by 0… and don’t let it crash your calculator!
@@ -88,6 +86,11 @@ keyboard.addEventListener("click", function (e) {
       num1 = parseInt(display.value);
       operator = undefined;
       num2 = undefined;
+    }
+
+    if(e.target.id === "btn-backspace" && display.value.length > 0) {
+        let newDisplay = display.value.split("");
+        display.value = newDisplay.splice(0, display.value.length - 2).join("");
     }
   }
 });
