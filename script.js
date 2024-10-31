@@ -1,10 +1,9 @@
 //TODO
 //round answers with long decimals so that they don’t overflow the screen.
-//Display a snarky error message if the user tries to divide by 0… and don’t let it crash your calculator!
+// get it working with single percentage values
 
 //BONUS
 //Let them type in decimals, the . can only be pressed once per number
-//add a backspace button
 //add KEYBOARD SUPPORT
 
 let num1 = '';
@@ -37,6 +36,10 @@ function operate(num1, num2, operator) {
       display.value = multiply(num1, num2);
       break;
     case "/":
+        if(num2 === 0) {
+            display.value = "Snarky Error Message";
+            break;
+        }
       display.value = divide(num1, num2);
       break;
   }
@@ -59,13 +62,9 @@ keyboard.addEventListener("click", function (e) {
             isNum2Perc = true;
           }
         }
+        return
       }
     
-      if (!(num1 == '') && basicOperators.includes(key)) {
-        operator = key;
-        expectingNum2 = true;
-      }
-
     if(num1 != '' && num2 != '' && operator != null) {
         if (operatorIds.includes(e.target.id)) {
             if (operator != null) {
@@ -76,11 +75,11 @@ keyboard.addEventListener("click", function (e) {
                     num2 = percent(parseFloat(num1), parseFloat(num2));
                 }
                 operate(parseFloat(num1), parseFloat(num2), operator);
+
                 num1 = parseFloat(display.value);
                 num2 = '';
                 isNum1Perc = false;
                 isNum2Perc = false;
-                display.value += operator;
             }
           }
       
@@ -98,6 +97,15 @@ keyboard.addEventListener("click", function (e) {
             isNum1Perc = false;
             isNum2Perc = false;
           }
+    }
+
+    if (!(num1 == '') && basicOperators.includes(key)) {
+        operator = key;
+        expectingNum2 = true;
+        let chkDisp = display.value.split("").reverse()
+        if(!basicOperators.includes(chkDisp[0])) {
+            display.value += operator;
+        }
     }
     
     if(e.target.id === "btn-backspace" && display.value.length > 0) {
