@@ -38,11 +38,11 @@ const operatorIds = ["btn-plus", "btn-minus", "btn-multiply", "btn-divide"];
 const display = document.getElementById("display");
 const keyboard = document.getElementById("keyboard");
 
-const add = (a, b) => Math.round((a + b) * 1e15) / 1e15;
-const subtract = (a, b) => Math.round((a - b) * 1e15) / 1e15;
-const multiply = (a, b) => Math.round(a * b * 1e15) / 1e15;
-const divide = (a, b) => Math.round((a / b) * 1e15) / 1e15;
-const percent = (a, b = 1) => Math.round(((b * a) / 100) * 1e15) / 1e15;
+const add = (a, b) => Math.round((a + b) * 1e14) / 1e14;
+const subtract = (a, b) => Math.round((a - b) * 1e14) / 1e14;
+const multiply = (a, b) => Math.round(a * b * 1e14) / 1e14;
+const divide = (a, b) => Math.round((a / b) * 1e14) / 1e14;
+const percent = (a, b = 1) => Math.round(((b * a) / 100) * 1e14) / 1e14;
 
 function operate(num1, num2, operator) {
   switch (operator) {
@@ -136,13 +136,10 @@ keyboard.addEventListener("click", function (e) {
             num2 = percent(parseFloat(num1), parseFloat(num2));
           }
           operate(parseFloat(num1), parseFloat(num2), operator);
-
           num1 = parseFloat(display.value);
-          num2 = "";
-          isNum1Perc = false;
-          isNum2Perc = false;
-          isNum1Dec = false;
-          isNum2Dec = false;
+          resetCalculator();
+          
+          expectingNum2 = true;
         }
       }
 
@@ -155,12 +152,8 @@ keyboard.addEventListener("click", function (e) {
         }
         operate(parseFloat(num1), parseFloat(num2), operator);
         num1 = parseFloat(display.value);
-        operator = null;
-        num2 = "";
-        isNum1Perc = false;
-        isNum2Perc = false;
-        isNum1Dec = false;
-        isNum2Dec = false;
+        resetCalculator();
+        expectingNum2 = true;
       }
     }
 
@@ -183,15 +176,19 @@ keyboard.addEventListener("click", function (e) {
     }
 
     if (e.target.id === "btn-clear") {
-      display.value = "";
-      num1 = "";
-      num2 = "";
-      operator = null;
-      expectingNum2 = false;
-      isNum1Perc = false;
-      isNum2Perc = false;
-      isNum1Dec = false;
-      isNum2Dec = false;
+        resetCalculator();
+        num1 = "";
+        display.value = "";
     }
   }
 });
+
+function resetCalculator() {
+    num2 = "";
+    operator = null;
+    expectingNum2 = false;
+    isNum1Perc = false;
+    isNum2Perc = false;
+    isNum1Dec = false;
+    isNum2Dec = false;
+  }
