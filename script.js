@@ -7,6 +7,7 @@ let isNum2Perc = false;
 let isNum1Dec = false;
 let isNum2Dec = false;
 
+//mapping keyboard keys to button id's
 const keyMappings = {
   0: "btn-0",
   1: "btn-1",
@@ -38,12 +39,14 @@ const operatorIds = ["btn-plus", "btn-minus", "btn-multiply", "btn-divide"];
 const display = document.getElementById("display");
 const keyboard = document.getElementById("keyboard");
 
+//basic calculator functions, only allow 14 digits
 const add = (a, b) => Math.round((a + b) * 1e14) / 1e14;
 const subtract = (a, b) => Math.round((a - b) * 1e14) / 1e14;
 const multiply = (a, b) => Math.round(a * b * 1e14) / 1e14;
 const divide = (a, b) => Math.round((a / b) * 1e14) / 1e14;
 const percent = (a, b = 1) => Math.round(((b * a) / 100) * 1e14) / 1e14;
 
+//determine which calculation we're doing
 function operate(num1, num2, operator) {
   switch (operator) {
     case "+":
@@ -65,15 +68,17 @@ function operate(num1, num2, operator) {
   }
 }
 
+//listen for keyboard events
 document.addEventListener("keydown", handleKeyPress);
 
 function handleKeyPress(event) {
   const key = event.key;
 
+  //checks if the key exists in the calculator
   if (keyMappings.hasOwnProperty(key)) {
     const buttonId = keyMappings[key];
     const buttonElement = document.getElementById(buttonId);
-
+//if there is such element, click on it
     if (buttonElement) {
       buttonElement.click();
     }
@@ -84,11 +89,13 @@ function handleKeyPress(event) {
   }
 }
 
+//listen for click and handle calculations
 keyboard.addEventListener("click", function (e) {
   if (e.target.classList.contains("calc-btn")) {
 
     key = e.target.textContent;
 
+    //this is checking if the input is numeric and allowing num1 to be negative,decimal or a percent
     if (
       !isNaN(key) ||
       key === "." ||
@@ -96,6 +103,7 @@ keyboard.addEventListener("click", function (e) {
       (key === "-" && !expectingNum2 && num1 === "") ||
       (key === "-" && expectingNum2 && num2 === "")
     ) {
+        //the same but for num 2
       if (
         (isNum1Perc && key === "%") ||
         (isNum1Dec && key === "." && !expectingNum2) ||
@@ -104,6 +112,7 @@ keyboard.addEventListener("click", function (e) {
       ) {
         return;
       }
+      //setting num1, setting flags if decimal or percentage
       if (!expectingNum2) {
         num1 += key;
         display.value += key;
@@ -113,6 +122,7 @@ keyboard.addEventListener("click", function (e) {
         if (key === ".") {
           isNum1Dec = true;
         }
+        //setting num2, setting flags if decimal or percentage
       } else {
         num2 += key;
         display.value += key;
@@ -126,9 +136,11 @@ keyboard.addEventListener("click", function (e) {
       return;
     }
 
+    //do an operation, only if all the numbers and operator are filled in
     if (num1 != "" && num2 != "" && operator != null) {
       if (operatorIds.includes(e.target.id)) {
         if (operator != null) {
+            //checking if percentage, do this operation first and then do the global operation
           if (isNum1Perc) {
             num1 = percent(parseFloat(num1));
           }
@@ -142,8 +154,9 @@ keyboard.addEventListener("click", function (e) {
           expectingNum2 = true;
         }
       }
-
+      
       if (e.target.id === "btn-equals") {
+        //same as the one above could maybe refactor it into a function
         if (isNum1Perc) {
           num1 = percent(parseFloat(num1));
         }
@@ -161,6 +174,7 @@ keyboard.addEventListener("click", function (e) {
       display.value = percent(parseFloat(num1));
     }
 
+    //adding the operator from an expression calculated by an operator for example 8+8+ will give 16+ and we wait for 2nd num input.
     if (!(num1 == "") && basicOperators.includes(key)) {
       operator = key;
       expectingNum2 = true;
@@ -170,6 +184,7 @@ keyboard.addEventListener("click", function (e) {
       }
     }
 
+    //backspace, deteles the last thing written
     if (e.target.id === "btn-backspace" && display.value.length > 0) {
       let newDisplay = display.value.split("");
       display.value = newDisplay.splice(0, display.value.length - 2).join("");
